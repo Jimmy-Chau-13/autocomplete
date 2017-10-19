@@ -1,0 +1,238 @@
+WEEK 1
+
+Processors
+Dual mode operation - multiple protection levels (privileged and user mode)
+
+User mode - can access memory, can not access other hardware device (disk)
+Privileged / Supervisor / Kernel Mode
+
+System calls 
+- code that operates in privileged mode, ( reading, writing, opening, closing a file)   accessing other hardware
+
+Interrupt Vector Table
+           -Array of function pointers which point to interrupt handlers, exception handlers, trap
+- only things in here can get privileged  
+- use this to get into privilege mode 
+
+Turning computer on 
+Firmware runs boot sector into memory, jumps to address where bootloader is and executes it
+Bootloader loads the OS
+Builds IVT               *trap * exception handling *interrupt handling
+Devices used to be physically connected to cpu (Interrupt Request Lines) which zaps the CPU to get its attention 
+EXAMPLE Interrupt Request Line 0 zaps the CPU then executes function 0 in the IVT 
+Calls function in IVT, runs in privileged mode 
+
+System Call Table
+Each system call( read write, etc) has an entry in this table 
+Push onto stack the function call you want (2), push arguments (filename, rw) then you execute the TRAP
+The trap is a function from the IVT (trap handler)
+The trap handler looks on the stack what function you want to call (2) with its arguments (filename ,rw)
+TRAP - software instruction assigned to an entry in the IVT
+Use this to use system calls 
+
+
+Trap 
+You as a user wants to get the CPU attention to be in privileged mode
+Call a trap - executes a function in the IVT
+Uses Trap to get privilege 
+When trap function returns, you lose privilege status 
+
+Interrupts 
+Hardware wants to get CPU attention
+Disk finished reading a sector -- wants to tell CPU it is ready
+Data has showed up on the network -- wants to CPU to read it
+Type something on keyboard -- wants to tell CPU to collect it 
+
+
+Exception handling 
+Mapping between physical and virtual pages of memory
+Running multiple programs - uses virtual memory to create illusion they are not sharing memory
+MMU - executes page fault
+
+Memory Managing Unit
+Built into the CPU
+Loading a value from memory into the processors  or storing a value from the CPU into memory
+If it can’t then it generates a page fault handler which kills the process
+Dividing by zero, generates dividing by zero exception, which runs dividing by zero handler which kills the program
+Needs to run in privilege mode, need to access OS data structures 
+
+Virtual Memory
+Contains OS data structure 
+
+
+Process Control Block (task structure)
+ maintains meta data of process (Register context)
+Each process is represented by the PCB
+Contains pointer to a data structure that keeps track of memory 
+Pointer to an array of file descriptor which is a pointer to data structure that keeps track of files
+
+The CPU has registers that keep info about the process
+
+Timer
+Counts back from 10ms to zero and generates an interrupt and etc
+Gets the CPU attention
+Calls the timer handler in the IVT 
+It is the OS scheduler 
+Every 10 ms it gets the OS scheduler to run
+Looks at a list of runnable process and decide if one of them should be running
+If it finds one then calls a context switch 
+
+Context Switch
+OS copies the register into the PCB (CURRENT PROCESS)
+Takes the PCB and put it in the runnable list (CURRENT PROCESS)
+Takes another process from the runnable list and select it for running
+Takes its saved register and copies them into the real register 
+Now it is able to run again b/c it is in the real register
+
+Each process has its own virtual memory
+
+Page Table Base Register 
+Pointer to virtual memory to physical memory 
+Per process data structure 
+
+
+Block list 
+Can be multiple block list 
+
+
+
+
+
+
+
+
+
+
+
+Week 2 (Processes) 
+
+Process Control Block
+Also known as Task Struct
+User work is represented as a process or task
+Data structure that maintains information the OS needs to maintain a better process 
+Points to some data structure that represents memory
+
+Life Cycle of the PCB
+fork() to create a new process. Clones an existing process and morph that process into what we want it to be. Morphing is called exec()
+ This process is now runnable/ready. (Ready to run but is not running) ie there might not be a CPU ready yet
+The runnable list is a queue (double linked list) where the PCBs are nodes.
+Dispatched
+Pulls out of runnable list  (performs a context switch) and runs it
+Say a timer interrupt goes off 
+The CPU executes the handler from the IVT
+The scheduler looks around and looks if anything else should be running right now
+Performs a context switch
+The current process is preempted and moved back to runnable list
+And another process is dispatched 
+
+Context switch = environment switch 
+Taking a register of the current running process and saving them
+Then loading another set of register into the hardware (register context)
+
+Making a Read Call from the Current Process
+Blocking system call - wants to read from disk
+Looks to see if this data is already in memory
+If it’s not then it is going to block until it is
+Puts the process on a wait/block queue (can be multiple queues)
+OS goes to runnable list and takes something from there to run it
+When the disk loads the data it copies it directly to memory 
+Goes to the block list and takes that process out of block state and makes it runnable again (readied)
+
+When Something Bad Happens
+Generates a fault
+Goes to IVT calls fault handler 
+Looks at current process and kills it 
+Leaves running state to Zombie state (dies)
+Frees all its files and memory but leaves the PCB in the zombie state 
+If its parent calls wait() then the zombie process is reaped 
+
+
+Fork() System Call
+Takes no arguments, 
+One process calls fork and returns two processes 
+ copies a process and morph it into something else
+Then read it into disk.
+PCB is put on Runnable Ready List 
+Dispatched to make it run
+The process is running with some kind of context
+Context switch (between two processes) to make it active
+Every 10ms the interrupt functions 
+Parent and child are sharing memory
+Uses mechanism called copy on write, share pages as long as they are reading them, when on process writes a page then it copies 
+
+Fork() and Process Identifier
+New process gets a new process id which is stored in the PCB
+Fork() returns a 0 to the child(the new process) and the child pid to the parent process 
+
+exec() - loads a process from disk 
+
+Wait queue / block queue - one queue for each similar processes 
+Disk reads the data on wait queue
+-Moves from wait to runnable 
+
+Leaving running state to a Zombie state 
+	-free all the PCB files and memories
+	- leaves the PCB in the zombie list until its parents call wait() which reaps it
+
+When parents die before its child the zombie is put into orphan then reparented
+There is a process on the unix system that runs when there is nothing else to run (idle process)
+Init process , initial process when system is booted 
+
+Process that dies while in wait
+	
+Virtual Memory 
+	-bottom Code (readable and executable) actual code of the program
+	- static data (read only data) not necessarily executable
+	- global data - variables we read from the file but can change
+	-heap - dynamic memory alloc
+	- stack, holds argument and local variables
+
+Windows process:
+fork() does not clone
+
+Wait(status)
+Waits for any child, 
+Returns the child’s pid 
+waitpid(pid,status, flags)    , NOHANG flag returns status but does not reap
+
+Signals 
+Provides a way for process to talk to each other and for the kernel to talk to the process
+Communicates through data structures 
+Signals are just bits 
+In the PCB are three data structure (pending, blocked, handler)
+Process to Process 
+Sends signal to the pending set (inside PCB)
+Only time pending gets checked is a return from a system call or when it is made active
+There is an array of handlers associated with the pending array that calls a function and reset the bit in the pending array
+You don’t want to receive signals all the time
+Blocked array, blocking a signal, it stays pending 
+Handler SIGIGN
+A do nothing handler
+
+signal(sigsegv, fn) - never use , rarely correct
+sigaction()
+sigprocmask() - takes existing and sets new one
+
+Sigchild
+When a process dies it sends a sigchild to its parent
+The parent has a sigchild handler 
+SIGTSTP
+SIGCONT
+
+THREADS
+Threads in a process share the same environment but do different things
+One stack per thread
+Threads are in the same virtual memory (one thread can overwrite another thread)
+Each thread has its own set of registers
+
+TASK
+Sometimes used interchangeably with process 
+History --- task is a process with threads
+
+Linux implementation of Stack, Threads, and Task
+
+
+
+Go to read linux code ******
+fork() and clone()
+
