@@ -8,8 +8,7 @@
 #include <stdlib.h>
 
 /*
- *
- *
+ * First argument is a text file to store in the dictionary
  */
 int main(int argc, char *argv[]) {
 
@@ -21,14 +20,12 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
-
-
     std::string dict_filename = argv[1];
     std::ifstream in;
     in.open(dict_filename.c_str(), std::ios::binary);
 
     DictionaryTrie* dictionary_trie = new DictionaryTrie();
-    Utils::load_dict(*dictionary_trie, in);
+    Util::load_dict(*dictionary_trie, in);
     std::string prefix;
     std::cout << "Enter prefix: ";
     while(std::getline(std::cin, prefix)){

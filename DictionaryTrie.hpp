@@ -1,8 +1,3 @@
-/**
- *  CSE 100 PA3 C++ Autocomplete
- *  Authors: Jor-el Briones, Christine Alvarado
- */
-
 #ifndef DICTIONARY_TRIE_HPP
 #define DICTIONARY_TRIE_HPP
 
@@ -17,8 +12,6 @@
 
 /**
  *  The class for a dictionary ADT, implemented as a trie
- *  You may implement this class as either a mulit-way trie
- *  or a ternary search trie, but you must use one or the other.
  *
  */
 class DictionaryTrie
@@ -32,7 +25,7 @@ public:
    * Return true if the word was inserted, and false if it
    * was not (i.e. it was already in the dictionary or it was
    * invalid (empty string) */
-  bool insert(std::string word, unsigned int freq);
+  bool insert(std::string word);
 
   /* Return true if word is in the dictionary, and false otherwise */
   bool find(std::string word) const;
@@ -53,16 +46,15 @@ public:
   /* Destructor */
   ~DictionaryTrie();
 
-  // Add your own data members and methods here
   class TrieNode
   {
     public:
 
       std::vector<TrieNode*> arr;
-      int freq;
-      bool exist;
-      char c;
-      std::string s;
+      int freq;           /* If it is a word stores the frequency of it */
+      bool exist;             /* true if it is a word, else false */
+      char c;                 /* the char this node contains */
+      std::string s;          /* Concatenates the current path */
 
 	/* used to compare the frequencies of the nodes */
 	class TrieNodePtrComp
@@ -95,7 +87,7 @@ public:
   TrieNode* end;
 
 	/* helper method to recursively insert */
-  bool insertHelp(std::string word, unsigned int freq, unsigned int index, TrieNode* prevNode);
+  bool insertHelp(std::string word, unsigned int index, TrieNode* prevNode);
 
 	/* helper method to recursively delete the tree */
   void deleteAll(TrieNode* n);

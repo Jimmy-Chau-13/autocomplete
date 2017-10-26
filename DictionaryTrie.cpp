@@ -1,8 +1,4 @@
 /*
- * Jimmy Chau cs100weh A11420982
- * Dexi Lu A11922669
- * February 18, 2016
- * PA3
  * This program creates a multiway trie and inserts nodes that contain a vector
  * of the alphabet. It returns true or false if a word exists return true
  * or false.It can take in a prefix and find the most frequent words that
@@ -22,16 +18,16 @@ DictionaryTrie::DictionaryTrie()
  * Return true if the word was inserted, and false if it
  * was not (i.e. it was already in the dictionary or it was
  * invalid (empty string) */
-bool DictionaryTrie::insert(std::string word, unsigned int freq)
+bool DictionaryTrie::insert(std::string word)
 {
-  int index = 0;
-  insertHelp(word, freq, index, root);
+
+  insertHelp(word, 0, root);
   return false;
 }
 
 /* Helper method to insert a word recursively
  */
-bool DictionaryTrie::insertHelp(std::string word, unsigned int freq, unsigned int index, TrieNode* prevNode)
+bool DictionaryTrie::insertHelp(std::string word, unsigned int index, TrieNode* prevNode)
 {
 
   char letter;	  // holds the next char in word
@@ -52,14 +48,14 @@ bool DictionaryTrie::insertHelp(std::string word, unsigned int freq, unsigned in
     // as well as push itself into its own priority queue
     if(index == word.length() - 1)
     {
-      curr->freq = freq;
+      curr->freq = curr->freq++;
       curr->exist = true;
       end = curr;
       curr->allWords.push(end);
       return true;
     }
 
-    insertHelp(word, freq, ++index, curr);
+    insertHelp(word, ++index, curr);
   }
 
 
@@ -67,6 +63,7 @@ bool DictionaryTrie::insertHelp(std::string word, unsigned int freq, unsigned in
   else
   {
     curr = new TrieNode();
+    curr->freq = 0;
     prevNode->arr[letter - 97] = curr;
 
     curr->c = word.at(index);
@@ -85,13 +82,13 @@ bool DictionaryTrie::insertHelp(std::string word, unsigned int freq, unsigned in
     if(index == word.length() - 1)
     {
       curr->exist = true;
-      curr->freq = freq;
-      end =curr;
+      curr->freq = curr->freq++;
+      end = curr;
       curr->allWords.push(end);
       return true;
     }
 
-    insertHelp(word, freq, ++index, curr);
+    insertHelp(word, ++index, curr);
   }
 
   // store the last node in each prefix's priority queue
