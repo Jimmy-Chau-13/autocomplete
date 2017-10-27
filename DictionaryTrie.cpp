@@ -140,8 +140,8 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
   for(unsigned int i = 0; i < prefix.length(); i++)
   {
      char letter = prefix.at(i);
-     if(letter == ' ')
-       letter = 26+97;
+     if (letter-97 < 0 || letter-97 > 26)
+       return words;
      if(pos->arr[letter-97] == 0)
        return words;
      else
@@ -152,8 +152,14 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
   while(!pos->allWords.empty() && num_completions != 0)
   {
     words.push_back(pos->allWords.top()->s);
+    pos->copy.push(pos->allWords.top());
     pos->allWords.pop();
     num_completions--;
+  }
+
+  while(!pos->copy.empty()) {
+    pos->allWords.push( pos->copy.top()    );
+    pos->copy.pop();
   }
 
     return words;

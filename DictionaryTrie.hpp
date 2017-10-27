@@ -14,7 +14,7 @@
  */
 class DictionaryTrie
 {
-public:
+  public:
 
   /* Create a new Dictionary that uses a Trie back end */
   DictionaryTrie();
@@ -43,18 +43,18 @@ public:
 
 
 	/* used to compare the frequencies of the nodes */
-	class TrieNodePtrComp
-	{
-		public:
-
+	 class TrieNodePtrComp
+	  {
+		  public:
 			bool operator()(TrieNode*& lhs, TrieNode*& rhs) const {
     		return *rhs < *lhs;
   		}
-	};
+	  };
+
 
     /* Stores all nodes of which this is a prefix of */
     std::priority_queue<TrieNode*, std::vector<TrieNode*>, TrieNodePtrComp> allWords;
-
+    std::priority_queue<TrieNode*, std::vector<TrieNode*>, TrieNodePtrComp> copy;
 
 
     TrieNode()
@@ -67,9 +67,7 @@ public:
 
 		bool operator<( TrieNode const & other) {
 	 		return freq > other.freq;
-	}
-
-    private:
+	  }
   };
 
   TrieNode* root;
