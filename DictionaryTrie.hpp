@@ -75,6 +75,7 @@ class DictionaryTrie
   TrieNode* curr;
   unsigned int index;
   std::string theWord;
+  int *wordFreqs;
 
   /* Return up to num_completions of the most frequent completions
    * of the prefix, such that the completions are words in the dictionary.

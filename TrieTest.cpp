@@ -27,14 +27,18 @@ int main(int argc, char *argv[]) {
     DictionaryTrie* dictionary_trie = new DictionaryTrie();
     Util::load_dict(*dictionary_trie, in);
     std::string prefix;
+
     std::cout << "Enter prefix: ";
     while(std::getline(std::cin, prefix)){
 
         std::cout << "\n\tUser Test: prefix= \"" << prefix ;
         std::vector<std::string> results = dictionary_trie->predictCompletions(prefix,1000);
         std::cout << "\tUser Test: results found: " <<  results.size() << "\n\n";
+        int* frequency = dictionary_trie->wordFreqs;
+        int i = 0;
         for(std::vector<std::string>::iterator it = results.begin(); it != results.end(); ++it) {
-          std::cout << *it << '\n';
+          std::cout << *it << " ------ " << *(frequency + i) << '\n';
+          i = i + 1;
         }
         std::cout << "\nEnter prefix: ";
 

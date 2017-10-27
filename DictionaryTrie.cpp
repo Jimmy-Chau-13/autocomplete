@@ -22,7 +22,7 @@ bool DictionaryTrie::insert(std::string word)
 {
   theWord = word;
   if(find(theWord)) {
-    std::cout << "Duplicate: " << theWord  << std::endl;
+    //std::cout << "Duplicate: " << theWord  << std::endl;
     return true;
   }
 
@@ -71,7 +71,7 @@ void DictionaryTrie::prefixExist(TrieNode* prevNode, char letter)
 void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
 {
   curr = new TrieNode();
-  curr->freq = 0;
+  //curr->freq = 0;
   prevNode->arr[letter - 97] = curr;
   curr->c = letter;
 
@@ -90,8 +90,9 @@ void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
  */
 void DictionaryTrie::lastChar()
 {
-    curr->freq = curr->freq++;
+    curr->freq = curr->freq + 1;
     curr->exist = true;
+    std::cout << "FREQUENCY: " << curr->freq  << std::endl;
     end = curr;
 
 }
@@ -120,7 +121,8 @@ bool DictionaryTrie::find(std::string word) const
   }
 
   if(pos->exist) {
-    pos->freq = pos->freq++;
+    pos->freq = pos->freq + 1;
+    std::cout << "FREQUENCY: " << pos->freq  << std::endl;
     return true;
   }
   else
@@ -148,20 +150,30 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
        pos = pos->arr[letter - 97];
   }
 
-  // insert into vector
+  // Grab all the results
+  int amount [num_completions];
+  int i = 0;
   while(!pos->allWords.empty() && num_completions != 0)
   {
-    words.push_back(pos->allWords.top()->s);
-    pos->copy.push(pos->allWords.top());
+    TrieNode* res = pos->allWords.top();
+    words.push_back(res->s);
+    pos->copy.push(res);
+
+    amount[i] = res->freq;
+    //std::cout << "ARRAY: " << amount[i] << std::endl;
+    i = i + 1;
+
     pos->allWords.pop();
     num_completions--;
   }
 
+  // Push results back into allWords
   while(!pos->copy.empty()) {
     pos->allWords.push( pos->copy.top()    );
     pos->copy.pop();
   }
 
+    wordFreqs = amount;
     return words;
 }
 
@@ -175,6 +187,7 @@ void DictionaryTrie::deleteAll(TrieNode* n)
   }
   delete n;
 }
+
 
 /* Destructor */
 DictionaryTrie::~DictionaryTrie()
