@@ -30,14 +30,13 @@ int main(int argc, char *argv[]) {
     std::cout << "Enter prefix: ";
     while(std::getline(std::cin, prefix)){
 
-
         std::cout << "\n\tUser Test: prefix= \"" << prefix ;
         std::vector<std::string> results = dictionary_trie->predictCompletions(prefix,1000);
         std::cout << "\tUser Test: results found: " <<  results.size() << "\n\n";
         for(std::vector<std::string>::iterator it = results.begin(); it != results.end(); ++it) {
           std::cout << *it << '\n';
         }
-        std::cout << "Enter prefix: ";
+        std::cout << "\nEnter prefix: ";
 
     }
 }

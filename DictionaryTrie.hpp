@@ -7,9 +7,6 @@
 #include <queue>
 #include <deque>
 
-//using namespace std;
-
-
 /**
  *  The class for a dictionary ADT, implemented as a trie
  *
@@ -30,19 +27,6 @@ public:
   /* Return true if word is in the dictionary, and false otherwise */
   bool find(std::string word) const;
 
-  /* Return up to num_completions of the most frequent completions
-   * of the prefix, such that the completions are words in the dictionary.
-   * These completions should be listed from most frequent to least.
-   * If there are fewer than num_completions legal completions, this
-   * function returns a vector with as many completions as possible.
-   * If no completions exist, then the function returns a vector of size 0.
-   * The prefix itself might be included in the returned words if the prefix
-   * is a word (and is among the num_completions most frequent completions
-   * of the prefix)
-   */
-  std::vector<std::string>
-  predictCompletions(std::string prefix, unsigned int num_completions);
-
   /* Destructor */
   ~DictionaryTrie();
 
@@ -56,6 +40,7 @@ public:
       char c;                 /* the char this node contains */
       std::string s;          /* Concatenates the current path */
 
+
 	/* used to compare the frequencies of the nodes */
 	class TrieNodePtrComp
 	{
@@ -66,7 +51,10 @@ public:
   		}
 	};
 
-  	std::priority_queue<TrieNode*, std::vector<TrieNode*>, TrieNodePtrComp> allWords;
+    /* Stores all nodes of which this is a prefix of */
+    std::priority_queue<TrieNode*, std::vector<TrieNode*>, TrieNodePtrComp> allWords;
+
+
 
     TrieNode()
      {
@@ -85,9 +73,31 @@ public:
 
   TrieNode* root;
   TrieNode* end;
+  TrieNode* curr;
+  unsigned int index;
+  std::string theWord;
+
+  /* Return up to num_completions of the most frequent completions
+   * of the prefix, such that the completions are words in the dictionary.
+   * These completions should be listed from most frequent to least.
+   * If there are fewer than num_completions legal completions, this
+   * function returns a vector with as many completions as possible.
+   * If no completions exist, then the function returns a vector of size 0.
+   * The prefix itself might be included in the returned words if the prefix
+   * is a word (and is among the num_completions most frequent completions
+   * of the prefix)
+   */
+  std::vector<std::string>
+  predictCompletions(std::string prefix, unsigned int num_completions);
 
 	/* helper method to recursively insert */
-  bool insertHelp(std::string word, unsigned int index, TrieNode* prevNode);
+  bool insertHelp(TrieNode* prevNode);
+
+  void prefixExist(TrieNode* prevNode, char letter);
+
+  void noPrefix(TrieNode* prevNode, char letter);
+
+  void lastChar();
 
 	/* helper method to recursively delete the tree */
   void deleteAll(TrieNode* n);

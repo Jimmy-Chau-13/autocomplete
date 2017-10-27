@@ -10,6 +10,7 @@
  * Loads the text file by grabbing each word and inserting it
  * into the dictionary.
  * Case Sensitive
+ * no puncuation functionality added yet
  */
 void Util::load_dict(DictionaryTrie& dict, istream& words)
 {
@@ -29,7 +30,6 @@ void Util::load_dict(DictionaryTrie& dict, istream& words)
           std::cout << temp << std::endl;
           if(temp == ".") break;
           dict.insert(temp);
-
         }
 
       //word_string.clear();
