@@ -4,8 +4,6 @@
 //#include "DictionaryBST.hpp"
 #include "util.hpp"
 
-
-
 /*
  * Loads the text file by grabbing each word and inserting it
  * into the dictionary.

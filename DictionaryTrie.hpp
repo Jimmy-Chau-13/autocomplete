@@ -6,6 +6,7 @@
 #include <iostream>
 #include <queue>
 #include <deque>
+#include <ctype.h>
 
 /**
  *  The class for a dictionary ADT, implemented as a trie

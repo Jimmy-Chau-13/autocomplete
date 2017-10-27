@@ -14,16 +14,22 @@ DictionaryTrie::DictionaryTrie()
   root = new TrieNode();
 }
 
-/* Insert a word with its frequency into the dictionary.
+/* Insert a word into the dictionary.
  * Return true if the word was inserted, and false if it
- * was not (i.e. it was already in the dictionary or it was
- * invalid (empty string) */
+ * was not invalid (empty string)
+ */
 bool DictionaryTrie::insert(std::string word)
 {
   theWord = word;
-  index = 0;
-  insertHelp(root);
-  return false;
+  if(find(theWord)) {
+    std::cout << "Duplicate: " << theWord  << std::endl;
+    return true;
+  }
+
+  else {
+    index = 0;
+    return insertHelp(root);
+  }
 }
 
 /* Helper method to insert a word recursively
@@ -31,19 +37,25 @@ bool DictionaryTrie::insert(std::string word)
 bool DictionaryTrie::insertHelp(TrieNode* prevNode)
 {
 
-  char letter = theWord.at(index);	  // holds the next char in word
+  char letter = tolower( theWord.at(index) );
+  int letterValue = letter - 97;
+  // Check if valid ascii value
+  if (letterValue < 0 || letterValue > 26) {
+    std::cout << "Failed to insert " << theWord  << std::endl;
+    return false;
+  }
+
   // case when prefix does exist
-  if(prevNode->arr[letter - 97] != 0)
+  if(prevNode->arr[letterValue] != 0)
       prefixExist(prevNode, letter);
 
   // case when prefix does not exist
   else
-  {
     noPrefix(prevNode, letter);
-    TrieNode* current = prevNode->arr[letter-97];
-    current->allWords.push(end);
-  }
-  
+
+  TrieNode* current = prevNode->arr[letterValue];
+  current->allWords.push(end);
+
   return true;
 }
 
@@ -51,15 +63,9 @@ void DictionaryTrie::prefixExist(TrieNode* prevNode, char letter)
 {
   // case when prefix does exist
     curr = prevNode->arr[letter- 97];
+    index++;
+    insertHelp(curr);
 
-    // if it is the last char in word then set freq and boolean
-    // as well as push itself into its own priority queue
-    if(index == theWord.length() - 1)
-      lastChar();
-    else {
-      index++;
-      insertHelp(curr);
-    }
 }
 
 void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
@@ -73,12 +79,15 @@ void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
   curr->s += prevNode->s + letter;
   if(index == theWord.length() - 1)
      lastChar();
+
   else {
     index++;
     insertHelp(curr);
   }
 }
 
+/* Update the node of the last letter in the word
+ */
 void DictionaryTrie::lastChar()
 {
     curr->freq = curr->freq++;
@@ -87,7 +96,9 @@ void DictionaryTrie::lastChar()
 
 }
 
-/* Return true if word is in the dictionary, and false otherwise */
+/* Return true if word is in the dictionary and increase its freq by 1
+ * false otherwise
+ */
 bool DictionaryTrie::find(std::string word) const
 {
   if(root == 0)
@@ -98,8 +109,9 @@ bool DictionaryTrie::find(std::string word) const
   for(unsigned int i = 0; i < word.length(); i++)
   {
     char letter = word.at(i);
-    if(letter == ' ')
-      letter = 26+97;
+    // Check if valid ascii value
+    if (letter-97 < 0 || letter-97 > 26)
+      return false;
 
     if(pos->arr[letter - 97] == 0)
       return false;
@@ -107,10 +119,12 @@ bool DictionaryTrie::find(std::string word) const
       pos = pos->arr[letter - 97];
   }
 
-  if(pos->exist)
+  if(pos->exist) {
+    pos->freq = pos->freq++;
     return true;
-
-  return false;
+  }
+  else
+    return false;
 }
 
 std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, unsigned int num_completions)
