@@ -21,6 +21,7 @@ DictionaryTrie::DictionaryTrie()
 bool DictionaryTrie::insert(std::string word)
 {
   theWord = word;
+  std::cout << "INSERTING: " << theWord  << std::endl;
   if(find(theWord)) {
     //std::cout << "Duplicate: " << theWord  << std::endl;
     return true;
@@ -38,6 +39,7 @@ bool DictionaryTrie::insertHelp(TrieNode* prevNode)
 {
 
   char letter = tolower( theWord.at(index) );
+  //std::cout << "LETTER IS : " << letter  << std::endl;
   int letterValue = letter - 97;
   // Check if valid ascii value
   if (letterValue < 0 || letterValue > 26) {
@@ -61,11 +63,14 @@ bool DictionaryTrie::insertHelp(TrieNode* prevNode)
 
 void DictionaryTrie::prefixExist(TrieNode* prevNode, char letter)
 {
-  // case when prefix does exist
-    curr = prevNode->arr[letter- 97];
-    index++;
-    insertHelp(curr);
 
+    curr = prevNode->arr[letter- 97];
+    if(index == theWord.length() - 1)
+       lastChar();
+    else {
+      index++;
+      insertHelp(curr);
+    }
 }
 
 void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
@@ -92,7 +97,7 @@ void DictionaryTrie::lastChar()
 {
     curr->freq = curr->freq + 1;
     curr->exist = true;
-    std::cout << "FREQUENCY: " << curr->freq  << std::endl;
+    //std::cout << "FREQUENCY: " << curr->freq  << std::endl;
     end = curr;
 
 }
@@ -122,7 +127,7 @@ bool DictionaryTrie::find(std::string word) const
 
   if(pos->exist) {
     pos->freq = pos->freq + 1;
-    std::cout << "FREQUENCY: " << pos->freq  << std::endl;
+    //std::cout << "FREQUENCY: " << pos->freq  << std::endl;
     return true;
   }
   else

@@ -47,7 +47,7 @@ class DictionaryTrie
 	  {
 		  public:
 			bool operator()(TrieNode*& lhs, TrieNode*& rhs) const {
-    		return *rhs < *lhs;
+    		return lhs->freq < rhs->freq;
   		}
 	  };
 

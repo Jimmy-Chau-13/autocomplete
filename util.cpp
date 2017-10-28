@@ -25,7 +25,7 @@ void Util::load_dict(DictionaryTrie& dict, istream& words)
         {
           string temp = "";
           iss >> temp;
-          std::cout << temp << std::endl;
+          std::cout << "GOT: " << temp << std::endl;
           if(temp == ".") break;
           dict.insert(temp);
         }
