@@ -23,7 +23,7 @@ class DictionaryTrie
    * Return true if the word was inserted, and false if it
    * was not (i.e. it was already in the dictionary or it was
    * invalid (empty string) */
-  bool insert(std::string word);
+  bool insert(std::string word,unsigned int theFreq);
 
   /* Return true if word is in the dictionary, and false otherwise */
   bool find(std::string word) const;
@@ -65,9 +65,8 @@ class DictionaryTrie
        c = 0;
      };
 
-		bool operator<( TrieNode const & other) {
-	 		return freq > other.freq;
-	  }
+		//bool operator<( TrieNode const & other) {
+	 		//return freq > other.freq;}
   };
 
   TrieNode* root;
@@ -76,6 +75,7 @@ class DictionaryTrie
   unsigned int index;
   std::string theWord;
   int *wordFreqs;
+  unsigned int the_freq;
 
   /* Return up to num_completions of the most frequent completions
    * of the prefix, such that the completions are words in the dictionary.

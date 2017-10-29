@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -g
+CXXFLAGS = -std=gnu++11 -Wall -g
 
 TrieTest: TrieTest.o util.o DictionaryTrie.o
 		$(CXX) $(CXXFLAGS) -o TrieTest TrieTest.o util.o DictionaryTrie.o

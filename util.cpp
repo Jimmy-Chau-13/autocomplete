@@ -15,6 +15,8 @@ void Util::load_dict(DictionaryTrie& dict, istream& words)
 
   // Stores extracted words from istream
   string data = "";
+  std::unordered_map<std::string,unsigned int>::iterator got;
+  std::unordered_map<std::string,unsigned int> word_map;
 
   while(getline(words, data))
     {
@@ -25,12 +27,18 @@ void Util::load_dict(DictionaryTrie& dict, istream& words)
         {
           string temp = "";
           iss >> temp;
-          std::cout << "GOT: " << temp << std::endl;
           if(temp == ".") break;
-          dict.insert(temp);
+          got = word_map.find(temp);
+          if ( got == word_map.end() )
+            word_map.insert( {temp,1} );
+          else
+             got->second =  got->second + 1;
         }
+    }
 
-      //word_string.clear();
-      //if(words.eof()) break;
+    std::unordered_map<std::string, unsigned int>::iterator it = word_map.begin();
+    while(it!=word_map.end()) {
+      dict.insert(it->first, it->second);
+      it++;
     }
 }

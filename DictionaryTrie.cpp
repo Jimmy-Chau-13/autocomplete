@@ -18,19 +18,14 @@ DictionaryTrie::DictionaryTrie()
  * Return true if the word was inserted, and false if it
  * was not invalid (empty string)
  */
-bool DictionaryTrie::insert(std::string word)
+bool DictionaryTrie::insert(std::string word, unsigned int theFrequency)
 {
   theWord = word;
+  the_freq = theFrequency;
   std::cout << "INSERTING: " << theWord  << std::endl;
-  if(find(theWord)) {
-    //std::cout << "Duplicate: " << theWord  << std::endl;
-    return true;
-  }
+  index = 0;
+  return insertHelp(root);
 
-  else {
-    index = 0;
-    return insertHelp(root);
-  }
 }
 
 /* Helper method to insert a word recursively
@@ -95,7 +90,7 @@ void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
  */
 void DictionaryTrie::lastChar()
 {
-    curr->freq = curr->freq + 1;
+    curr->freq = the_freq;
     curr->exist = true;
     //std::cout << "FREQUENCY: " << curr->freq  << std::endl;
     end = curr;
