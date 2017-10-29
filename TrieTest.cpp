@@ -34,10 +34,12 @@ int main(int argc, char *argv[]) {
         std::cout << "\n\tUser Test: prefix= \"" << prefix ;
         std::vector<std::string> results = dictionary_trie->predictCompletions(prefix,1000);
         std::cout << "\tUser Test: results found: " <<  results.size() << "\n\n";
+        std::cout<<"\tWORD\t\t" << "FREQUENCY\n";
+        std::cout<<"\t----\t\t---------\n";
         int* frequency = dictionary_trie->wordFreqs;
         int i = 0;
         for(std::vector<std::string>::iterator it = results.begin(); it != results.end(); ++it) {
-          std::cout << *it << " ------ " << *(frequency + i) << '\n';
+          std::cout << "\t" << *it << "\t\t" << *(frequency + i) << '\n';
           i = i + 1;
         }
         std::cout << "\nEnter prefix: ";
