@@ -21,6 +21,7 @@ DictionaryTrie::DictionaryTrie()
 bool DictionaryTrie::insert(std::string word, unsigned int theFrequency)
 {
   theWord = word;
+  if(theWord.empty()) return false;
   the_freq = theFrequency;
   std::cout << "INSERTING: " << theWord  << std::endl;
   index = 0;
@@ -35,20 +36,26 @@ bool DictionaryTrie::insertHelp(TrieNode* prevNode)
 
   char letter = tolower( theWord.at(index) );
   //std::cout << "LETTER IS : " << letter  << std::endl;
-  int letterValue = letter - 97;
   // Check if valid ascii value
-  if (letterValue < 0 || letterValue > 26) {
+  int letterValue;
+  if(letter == 39)
+    letterValue = 26;
+  else if(letter == 45)
+    letterValue = 27;
+  else if (letter >= 97 && letter <= 122)
+    letterValue = letter - 97;
+  else {
     std::cout << "Failed to insert " << theWord  << std::endl;
     return false;
   }
 
   // case when prefix does exist
   if(prevNode->arr[letterValue] != 0)
-      prefixExist(prevNode, letter);
+      prefixExist(prevNode, letterValue);
 
   // case when prefix does not exist
   else
-    noPrefix(prevNode, letter);
+    noPrefix(prevNode, letterValue);
 
   TrieNode* current = prevNode->arr[letterValue];
   current->allWords.push(end);
@@ -56,10 +63,10 @@ bool DictionaryTrie::insertHelp(TrieNode* prevNode)
   return true;
 }
 
-void DictionaryTrie::prefixExist(TrieNode* prevNode, char letter)
+void DictionaryTrie::prefixExist(TrieNode* prevNode, int letter)
 {
 
-    curr = prevNode->arr[letter- 97];
+    curr = prevNode->arr[letter];
     if(index == theWord.length() - 1)
        lastChar();
     else {
@@ -68,15 +75,15 @@ void DictionaryTrie::prefixExist(TrieNode* prevNode, char letter)
     }
 }
 
-void DictionaryTrie::noPrefix(TrieNode* prevNode, char letter)
+void DictionaryTrie::noPrefix(TrieNode* prevNode, int letter)
 {
   curr = new TrieNode();
   //curr->freq = 0;
-  prevNode->arr[letter - 97] = curr;
-  curr->c = letter;
+  prevNode->arr[letter] = curr;
+  curr->c = theWord.at(index);
 
   // update the string of the node
-  curr->s += prevNode->s + letter;
+  curr->s += prevNode->s + theWord.at(index);
   if(index == theWord.length() - 1)
      lastChar();
 
@@ -141,13 +148,22 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
   TrieNode* pos = root;
   for(unsigned int i = 0; i < prefix.length(); i++)
   {
-     char letter = prefix.at(i);
-     if (letter-97 < 0 || letter-97 > 26)
-       return words;
-     if(pos->arr[letter-97] == 0)
-       return words;
-     else
-       pos = pos->arr[letter - 97];
+    char letter = prefix.at(i);
+    int letterValue;
+    if(letter == 39)
+     letterValue = 26;
+    else if(letter == 45)
+     letterValue = 27;
+    else if (letter >= 97 && letter <= 122)
+     letterValue = letter - 97;
+    else {
+      return words;
+    }
+
+    if(pos->arr[letterValue] == 0)
+      return words;
+    else
+     pos = pos->arr[letterValue];
   }
 
   // Grab all the results

@@ -59,7 +59,7 @@ class DictionaryTrie
 
     TrieNode()
      {
-       arr = std::vector<TrieNode*>(27, (TrieNode*)0);
+       arr = std::vector<TrieNode*>(28, (TrieNode*)0);
        freq = 0;
        exist = false;
        c = 0;
@@ -93,9 +93,9 @@ class DictionaryTrie
 	/* helper method to recursively insert */
   bool insertHelp(TrieNode* prevNode);
 
-  void prefixExist(TrieNode* prevNode, char letter);
+  void prefixExist(TrieNode* prevNode, int letter);
 
-  void noPrefix(TrieNode* prevNode, char letter);
+  void noPrefix(TrieNode* prevNode, int letter);
 
   void lastChar();
 

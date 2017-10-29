@@ -20,14 +20,27 @@ void Util::load_dict(DictionaryTrie& dict, istream& words)
 
   while(getline(words, data))
     {
-      data = data + " .";
+      data = data + " !@#$";
       istringstream iss(data);
 
       while(1)
         {
           string temp = "";
           iss >> temp;
-          if(temp == ".") break;
+          if(temp == "!@#$") break;
+          if(temp.empty()) continue;
+          //Remove puncuations
+          std::string::iterator it=temp.begin();
+          while(it!=temp.end()) {
+            if(*it!=39 || *it!=45) {
+              if(*it < 65 || *it > 122) {
+                temp.erase(it);
+                continue;
+              }
+            }
+            it++;
+          }
+
           got = word_map.find(temp);
           if ( got == word_map.end() )
             word_map.insert( {temp,1} );
